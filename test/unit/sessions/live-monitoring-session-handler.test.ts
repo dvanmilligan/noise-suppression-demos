@@ -5,7 +5,22 @@ import LiveMonitoringSessionHandler from '../../../src/sessions/live-monitoring-
 import * as utils from '../../../src/utils';
 import BaseSessionHandler from "../../../src/sessions/base-session-handler";
 import * as mediaUtils from "../../../src/media/media-utils";
-import {IExtendedMediaSession, LiveScreenMonitoringSession, VideoMediaSession} from "../../../src";
+import {
+  IExtendedMediaSession,
+  IStartLiveMonitoringSessionParams,
+  LiveScreenMonitoringSession,
+  VideoMediaSession
+} from "../../../src";
+
+jest.mock('jwt-decode', () => ({
+  jwtDecode: jest.fn(() => ({
+    data: {
+      jid: 'test-jid',
+      conversationId: 'conv-123',
+      sourceCommunicationId: 'source-123'
+    }
+  }))
+}));
 
 let handler: LiveMonitoringSessionHandler;
 let mockSdk: GenesysCloudWebrtcSdk;
@@ -39,6 +54,63 @@ describe('shouldHandleSessionByJid', () => {
 describe('handleConversationUpdate', () => {
   it('should be a no-op', () => {
     expect(() => handler.handleConversationUpdate()).not.toThrow();
+  });
+});
+
+describe('startSession', () => {
+  it('should start a live monitoring session with JWT', async () => {
+    const mockJwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImppZCI6InRlc3QtamlkIiwiY29udmVyc2F0aW9uSWQiOiJjb252LTEyMyIsInNvdXJjZUNvbW11bmljYXRpb25JZCI6InNvdXJjZS0xMjMifX0.test';
+    mockSdk._config.jwt = mockJwt;
+
+    const initiateRtcSessionSpy = jest.spyOn(mockSdk._streamingConnection.webrtcSessions, 'initiateRtcSession').mockResolvedValue(null);
+    const logSpy = jest.spyOn(handler, 'log' as any);
+
+    const startParams = {
+      jid: 'test-jid'
+    } as IStartLiveMonitoringSessionParams;
+
+    const result = await handler.startSession(startParams);
+
+    expect(initiateRtcSessionSpy).toHaveBeenCalledWith({
+      jid: 'test-jid',
+      provideAudio: false,
+      provideVideo: true,
+      conversationId: 'conv-123',
+      sourceCommunicationId: 'source-123',
+      mediaPurpose: 'liveScreenMonitoring',
+    });
+    expect(result).toEqual({ conversationId: 'conv-123' });
+    expect(logSpy).toHaveBeenCalledWith('info', 'starting live monitoring session with a jwt', expect.any(Object));
+  });
+
+  it('should start a live monitoring session successfully without JWT', async () => {
+    const mockResponse = { data: { conversationId: 'conv-123' } };
+    jest.spyOn(utils, 'requestApi').mockResolvedValue(mockResponse);
+
+    const startParams = {
+      jid: 'test-jid'
+    } as IStartLiveMonitoringSessionParams;
+
+    const result = await handler.startSession(startParams);
+
+    expect(utils.requestApi).toHaveBeenCalledWith('/conversations/videos', {
+      method: 'post',
+      data: JSON.stringify({ roomId: 'test-jid', participant: { address: 'user@example.com' } })
+    });
+    expect(result).toEqual({ conversationId: 'conv-123' });
+  });
+
+  it('should handle API errors and clean up requested sessions', async () => {
+    const mockError = new Error('API Error');
+    jest.spyOn(utils, 'requestApi').mockRejectedValue(mockError);
+    const logSpy = jest.spyOn(handler, 'log' as any);
+
+    const startParams = {
+      jid: 'test-jid'
+    } as IStartLiveMonitoringSessionParams;
+
+    await expect(handler.startSession(startParams)).rejects.toThrow('API Error');
+    expect(logSpy).toHaveBeenCalledWith('error', 'Failed to request live monitoring session', mockError);
   });
 });
 

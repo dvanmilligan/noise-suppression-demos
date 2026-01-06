@@ -4,12 +4,15 @@ import {
   IAcceptSessionRequest,
   IUpdateOutgoingMedia,
   LiveScreenMonitoringSession,
+  IStartLiveMonitoringSessionParams,
 } from '../types/interfaces';
 import BaseSessionHandler from './base-session-handler';
 import { SessionTypes, SdkErrorTypes } from '../types/enums';
-import {createAndEmitSdkError, isLiveScreenMonitorJid} from '../utils';
+import {createAndEmitSdkError, isLiveScreenMonitorJid, requestApi} from '../utils';
 import {Constants} from "stanza";
 import {createNewStreamWithTrack} from '../media/media-utils';
+import { jwtDecode } from "jwt-decode";
+import {InitRtcSessionOptions} from "genesys-cloud-streaming-client/dist/es/webrtc";
 
 export class LiveMonitoringSessionHandler extends BaseSessionHandler {
   sessionType = SessionTypes.liveScreenMonitoring;
@@ -22,6 +25,41 @@ export class LiveMonitoringSessionHandler extends BaseSessionHandler {
   handleConversationUpdate(): void {
     /* no-op */
     return;
+  }
+
+  async startSession(startParams: IStartLiveMonitoringSessionParams): Promise<{ conversationId: string }> {
+    if (this.sdk._config.jwt) {
+      const decodedJwt: any = jwtDecode(this.sdk._config.jwt);
+      const opts = {
+        jid: decodedJwt.data.jid,
+        provideAudio: false,
+        provideVideo: true,
+        conversationId: decodedJwt.data.conversationId,
+        sourceCommunicationId: decodedJwt.data.sourceCommunicationId,
+        mediaPurpose: SessionTypes.liveScreenMonitoring,
+      } as InitRtcSessionOptions;
+      this.log('info', 'starting live monitoring session with a jwt', { decodedJwt, opts });
+
+      await this.sdk._streamingConnection.webrtcSessions.initiateRtcSession(opts);
+      return { conversationId: decodedJwt.data.conversationId };
+    } else {
+      const participant = { address: this.sdk._personDetails.chat.jabberId };
+      const data = JSON.stringify({
+        roomId: startParams.jid,
+        participant
+      });
+      try {
+        const response = await requestApi.call(this.sdk, '/conversations/videos', {
+          method: 'post',
+          data
+        });
+
+        return { conversationId: response.data.conversationId };
+      } catch (err) {
+        this.log('error', 'Failed to request live monitoring session', err);
+        throw err;
+      }
+    }
   }
 
   async handlePropose (pendingSession: IPendingSession): Promise<void> {

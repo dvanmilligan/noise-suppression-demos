@@ -857,6 +857,10 @@ export interface IStartVideoMeetingSessionParams extends IStartSessionParams {
   meetingId: string;
 }
 
+export interface IStartLiveMonitoringSessionParams extends IStartSessionParams {
+  jid: string;
+}
+
 export interface ISessionMuteRequest {
   /** conversation id */
   conversationId: string;
