@@ -147,8 +147,8 @@ export class GenesysCloudWebrtcSdk extends (EventEmitter as { new(): StrictEvent
 
     // If using JWT auth, we only support screen recording and video conferencing.
     if (options.jwt) {
-      console.debug(`Forcing allowed session types to be ${SessionTypes.screenRecording} and ${SessionTypes.collaborateVideo} due to jwt auth`);
-      allowedSessionTypes = [ SessionTypes.screenRecording, SessionTypes.collaborateVideo ];
+      console.debug(`Forcing allowed session types to be ${SessionTypes.screenRecording}, ${SessionTypes.collaborateVideo} and ${SessionTypes.liveScreenMonitoring} due to jwt auth`);
+      allowedSessionTypes = [ SessionTypes.screenRecording, SessionTypes.collaborateVideo, SessionTypes.liveScreenMonitoring ];
     }
 
     this._config = {
@@ -418,6 +418,20 @@ export class GenesysCloudWebrtcSdk extends (EventEmitter as { new(): StrictEvent
     (softphoneParams as IStartSoftphoneSessionParams).sessionType = SessionTypes.softphone;
     const callInfo = await this.sessionManager.startSession((softphoneParams as IStartSoftphoneSessionParams));
     return callInfo;
+  }
+
+  /**
+   * Start a live screen monitoring session for a specific user.
+   * Requires authentication via JWT or access token.
+   *
+   * `initialize()` must be called first.
+   */
+  async startLiveScreenMonitoring (): Promise<any> {
+    if (!this._config.jwt && !this._config.accessToken) {
+      throw createAndEmitSdkError.call(this, SdkErrorTypes.not_supported, 'Live screen monitoring requires authentication via JWT or access token.');
+    }
+
+    return this.sessionManager.startSession({ sessionType: SessionTypes.liveScreenMonitoring });
   }
 
   /**

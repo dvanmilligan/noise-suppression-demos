@@ -6,10 +6,8 @@ import * as utils from '../../../src/utils';
 import BaseSessionHandler from "../../../src/sessions/base-session-handler";
 import * as mediaUtils from "../../../src/media/media-utils";
 import {
-  IExtendedMediaSession,
   IStartLiveMonitoringSessionParams,
   LiveScreenMonitoringSession,
-  VideoMediaSession
 } from "../../../src";
 
 jest.mock('jwt-decode', () => ({
@@ -69,48 +67,15 @@ describe('startSession', () => {
       jid: 'test-jid'
     } as IStartLiveMonitoringSessionParams;
 
-    const result = await handler.startSession(startParams);
+    await handler.startSession(startParams);
 
     expect(initiateRtcSessionSpy).toHaveBeenCalledWith({
       jid: 'test-jid',
       provideAudio: false,
       provideVideo: true,
-      conversationId: 'conv-123',
-      sourceCommunicationId: 'source-123',
       mediaPurpose: 'liveScreenMonitoring',
     });
-    expect(result).toEqual({ conversationId: 'conv-123' });
     expect(logSpy).toHaveBeenCalledWith('info', 'starting live monitoring session with a jwt', expect.any(Object));
-  });
-
-  it('should start a live monitoring session successfully without JWT', async () => {
-    const mockResponse = { data: { conversationId: 'conv-123' } };
-    jest.spyOn(utils, 'requestApi').mockResolvedValue(mockResponse);
-
-    const startParams = {
-      jid: 'test-jid'
-    } as IStartLiveMonitoringSessionParams;
-
-    const result = await handler.startSession(startParams);
-
-    expect(utils.requestApi).toHaveBeenCalledWith('/conversations/videos', {
-      method: 'post',
-      data: JSON.stringify({ roomId: 'test-jid', participant: { address: 'user@example.com' } })
-    });
-    expect(result).toEqual({ conversationId: 'conv-123' });
-  });
-
-  it('should handle API errors and clean up requested sessions', async () => {
-    const mockError = new Error('API Error');
-    jest.spyOn(utils, 'requestApi').mockRejectedValue(mockError);
-    const logSpy = jest.spyOn(handler, 'log' as any);
-
-    const startParams = {
-      jid: 'test-jid'
-    } as IStartLiveMonitoringSessionParams;
-
-    await expect(handler.startSession(startParams)).rejects.toThrow('API Error');
-    expect(logSpy).toHaveBeenCalledWith('error', 'Failed to request live monitoring session', mockError);
   });
 });
 

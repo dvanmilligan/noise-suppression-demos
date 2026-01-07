@@ -27,38 +27,18 @@ export class LiveMonitoringSessionHandler extends BaseSessionHandler {
     return;
   }
 
-  async startSession(startParams: IStartLiveMonitoringSessionParams): Promise<{ conversationId: string }> {
+  async startSession(startParams: IStartLiveMonitoringSessionParams): Promise<any> {
     if (this.sdk._config.jwt) {
       const decodedJwt: any = jwtDecode(this.sdk._config.jwt);
       const opts = {
         jid: decodedJwt.data.jid,
         provideAudio: false,
         provideVideo: true,
-        conversationId: decodedJwt.data.conversationId,
-        sourceCommunicationId: decodedJwt.data.sourceCommunicationId,
         mediaPurpose: SessionTypes.liveScreenMonitoring,
       } as InitRtcSessionOptions;
       this.log('info', 'starting live monitoring session with a jwt', { decodedJwt, opts });
 
       await this.sdk._streamingConnection.webrtcSessions.initiateRtcSession(opts);
-      return { conversationId: decodedJwt.data.conversationId };
-    } else {
-      const participant = { address: this.sdk._personDetails.chat.jabberId };
-      const data = JSON.stringify({
-        roomId: startParams.jid,
-        participant
-      });
-      try {
-        const response = await requestApi.call(this.sdk, '/conversations/videos', {
-          method: 'post',
-          data
-        });
-
-        return { conversationId: response.data.conversationId };
-      } catch (err) {
-        this.log('error', 'Failed to request live monitoring session', err);
-        throw err;
-      }
     }
   }
 
