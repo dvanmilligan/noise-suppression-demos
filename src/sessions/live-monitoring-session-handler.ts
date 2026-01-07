@@ -4,11 +4,11 @@ import {
   IAcceptSessionRequest,
   IUpdateOutgoingMedia,
   LiveScreenMonitoringSession,
-  IStartLiveMonitoringSessionParams,
+  IStartSessionParams,
 } from '../types/interfaces';
 import BaseSessionHandler from './base-session-handler';
 import { SessionTypes, SdkErrorTypes } from '../types/enums';
-import {createAndEmitSdkError, isLiveScreenMonitorJid, requestApi} from '../utils';
+import {createAndEmitSdkError, isLiveScreenMonitorJid} from '../utils';
 import {Constants} from "stanza";
 import {createNewStreamWithTrack} from '../media/media-utils';
 import { jwtDecode } from "jwt-decode";
@@ -27,7 +27,7 @@ export class LiveMonitoringSessionHandler extends BaseSessionHandler {
     return;
   }
 
-  async startSession(startParams: IStartLiveMonitoringSessionParams): Promise<any> {
+  async startSession(startParams: IStartSessionParams): Promise<any> {
     if (this.sdk._config.jwt) {
       const decodedJwt: any = jwtDecode(this.sdk._config.jwt);
       const opts = {
@@ -37,7 +37,6 @@ export class LiveMonitoringSessionHandler extends BaseSessionHandler {
         mediaPurpose: SessionTypes.liveScreenMonitoring,
       } as InitRtcSessionOptions;
       this.log('info', 'starting live monitoring session with a jwt', { decodedJwt, opts });
-
       await this.sdk._streamingConnection.webrtcSessions.initiateRtcSession(opts);
     }
   }

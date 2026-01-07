@@ -6,8 +6,9 @@ import * as utils from '../../../src/utils';
 import BaseSessionHandler from "../../../src/sessions/base-session-handler";
 import * as mediaUtils from "../../../src/media/media-utils";
 import {
-  IStartLiveMonitoringSessionParams,
+  IStartSessionParams,
   LiveScreenMonitoringSession,
+  SessionTypes,
 } from "../../../src";
 
 jest.mock('jwt-decode', () => ({
@@ -64,8 +65,8 @@ describe('startSession', () => {
     const logSpy = jest.spyOn(handler, 'log' as any);
 
     const startParams = {
-      jid: 'test-jid'
-    } as IStartLiveMonitoringSessionParams;
+      sessionType: SessionTypes.liveScreenMonitoring
+    } as IStartSessionParams;
 
     await handler.startSession(startParams);
 
@@ -73,7 +74,7 @@ describe('startSession', () => {
       jid: 'test-jid',
       provideAudio: false,
       provideVideo: true,
-      mediaPurpose: 'liveScreenMonitoring',
+      mediaPurpose: SessionTypes.liveScreenMonitoring,
     });
     expect(logSpy).toHaveBeenCalledWith('info', 'starting live monitoring session with a jwt', expect.any(Object));
   });
