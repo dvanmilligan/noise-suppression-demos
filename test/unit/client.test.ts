@@ -347,6 +347,7 @@ describe('Client', () => {
     });
   });
 
+
   describe('startScreenShare()', () => {
     it('should reject if authenticated user', async () => {
       sdk = constructSdk();

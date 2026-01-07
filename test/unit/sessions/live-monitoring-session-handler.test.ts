@@ -9,16 +9,6 @@ import {
   LiveScreenMonitoringSession,
 } from "../../../src";
 
-jest.mock('jwt-decode', () => ({
-  jwtDecode: jest.fn(() => ({
-    data: {
-      jid: 'test-jid',
-      conversationId: 'conv-123',
-      sourceCommunicationId: 'source-123'
-    }
-  }))
-}));
-
 let handler: LiveMonitoringSessionHandler;
 let mockSdk: GenesysCloudWebrtcSdk;
 let mockSessionManager: SessionManager;
