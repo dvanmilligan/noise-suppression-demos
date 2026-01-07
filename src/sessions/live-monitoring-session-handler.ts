@@ -4,15 +4,12 @@ import {
   IAcceptSessionRequest,
   IUpdateOutgoingMedia,
   LiveScreenMonitoringSession,
-  IStartSessionParams,
 } from '../types/interfaces';
 import BaseSessionHandler from './base-session-handler';
 import { SessionTypes, SdkErrorTypes } from '../types/enums';
 import {createAndEmitSdkError, isLiveScreenMonitorJid} from '../utils';
 import {Constants} from "stanza";
 import {createNewStreamWithTrack} from '../media/media-utils';
-import { jwtDecode } from "jwt-decode";
-import {InitRtcSessionOptions} from "genesys-cloud-streaming-client/dist/es/webrtc";
 
 export class LiveMonitoringSessionHandler extends BaseSessionHandler {
   sessionType = SessionTypes.liveScreenMonitoring;
@@ -25,20 +22,6 @@ export class LiveMonitoringSessionHandler extends BaseSessionHandler {
   handleConversationUpdate(): void {
     /* no-op */
     return;
-  }
-
-  async startSession(startParams: IStartSessionParams): Promise<any> {
-    if (this.sdk._config.jwt) {
-      const decodedJwt: any = jwtDecode(this.sdk._config.jwt);
-      const opts = {
-        jid: decodedJwt.data.jid,
-        provideAudio: false,
-        provideVideo: true,
-        mediaPurpose: SessionTypes.liveScreenMonitoring,
-      } as InitRtcSessionOptions;
-      this.log('info', 'starting live monitoring session with a jwt', { decodedJwt, opts });
-      await this.sdk._streamingConnection.webrtcSessions.initiateRtcSession(opts);
-    }
   }
 
   async handlePropose (pendingSession: IPendingSession): Promise<void> {

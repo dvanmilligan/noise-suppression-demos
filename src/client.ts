@@ -421,20 +421,6 @@ export class GenesysCloudWebrtcSdk extends (EventEmitter as { new(): StrictEvent
   }
 
   /**
-   * Start a live screen monitoring session for a specific user.
-   * Requires authentication via JWT or access token.
-   *
-   * `initialize()` must be called first.
-   */
-  async startLiveScreenMonitoring (): Promise<any> {
-    if (!this._config.jwt && !this._config.accessToken) {
-      throw createAndEmitSdkError.call(this, SdkErrorTypes.not_supported, 'Live screen monitoring requires authentication via JWT or access token.');
-    }
-
-    return this.sessionManager.startSession({ sessionType: SessionTypes.liveScreenMonitoring });
-  }
-
-  /**
    * Update the output device for all incoming audio
    *
    *  NOTES:

@@ -347,48 +347,6 @@ describe('Client', () => {
     });
   });
 
-  describe('startLiveScreenMonitoring()', () => {
-    it('should throw if guest user', async () => {
-      sdk = constructSdk({ organizationId: 'some-org' }); // no access_token is a guest user
-      try {
-        await sdk.startLiveScreenMonitoring();
-        fail('should have failed');
-      } catch (e) {
-        expect(e).toEqual(new Error('Live screen monitoring requires authentication via JWT or access token.'));
-        expect(sessionManagerMock.startSession).not.toHaveBeenCalled();
-      }
-    });
-
-    it('should call session manager to start live screen monitor', async () => {
-      sdk = constructSdk();
-
-      sessionManagerMock.startSession.mockResolvedValue({});
-      await sdk.startLiveScreenMonitoring();
-      expect(sessionManagerMock.startSession).toBeCalledWith({ sessionType: SessionTypes.liveScreenMonitoring });
-    });
-
-    it('should allow live screen monitor with JWT authentication', async () => {
-      const testJwt = 'test.jwt.token';
-      sdk = constructSdk({ jwt: testJwt });
-
-      sdk._personDetails = {
-        id: 'test-user-id',
-        name: 'Test User',
-        chat: {
-          jabberId: 'test-user@test.com'
-        }
-      };
-
-      sessionManagerMock.startSession.mockResolvedValue({});
-      await sdk.startLiveScreenMonitoring();
-
-      expect(sessionManagerMock.startSession).toBeCalledWith({
-        sessionType: SessionTypes.liveScreenMonitoring
-      });
-    });
-  });
-
-
   describe('startScreenShare()', () => {
     it('should reject if authenticated user', async () => {
       sdk = constructSdk();

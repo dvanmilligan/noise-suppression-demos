@@ -6,9 +6,7 @@ import * as utils from '../../../src/utils';
 import BaseSessionHandler from "../../../src/sessions/base-session-handler";
 import * as mediaUtils from "../../../src/media/media-utils";
 import {
-  IStartSessionParams,
   LiveScreenMonitoringSession,
-  SessionTypes,
 } from "../../../src";
 
 jest.mock('jwt-decode', () => ({
@@ -53,30 +51,6 @@ describe('shouldHandleSessionByJid', () => {
 describe('handleConversationUpdate', () => {
   it('should be a no-op', () => {
     expect(() => handler.handleConversationUpdate()).not.toThrow();
-  });
-});
-
-describe('startSession', () => {
-  it('should start a live monitoring session with JWT', async () => {
-    const mockJwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImppZCI6InRlc3QtamlkIiwiY29udmVyc2F0aW9uSWQiOiJjb252LTEyMyIsInNvdXJjZUNvbW11bmljYXRpb25JZCI6InNvdXJjZS0xMjMifX0.test';
-    mockSdk._config.jwt = mockJwt;
-
-    const initiateRtcSessionSpy = jest.spyOn(mockSdk._streamingConnection.webrtcSessions, 'initiateRtcSession').mockResolvedValue(null);
-    const logSpy = jest.spyOn(handler, 'log' as any);
-
-    const startParams = {
-      sessionType: SessionTypes.liveScreenMonitoring
-    } as IStartSessionParams;
-
-    await handler.startSession(startParams);
-
-    expect(initiateRtcSessionSpy).toHaveBeenCalledWith({
-      jid: 'test-jid',
-      provideAudio: false,
-      provideVideo: true,
-      mediaPurpose: SessionTypes.liveScreenMonitoring,
-    });
-    expect(logSpy).toHaveBeenCalledWith('info', 'starting live monitoring session with a jwt', expect.any(Object));
   });
 });
 
