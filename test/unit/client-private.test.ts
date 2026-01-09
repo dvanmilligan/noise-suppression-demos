@@ -243,13 +243,28 @@ describe('proxyStreamingClientEvents', () => {
     expect(mockSdk.logger.info).toHaveBeenCalledWith('Inside proxyStreamingClientEvents');
     expect(mockSdk.logger.info).toHaveBeenCalledWith('Inside _personDetails');
     expect(mockSdk.logger.info).toHaveBeenCalledWith('Inside isJwtAuth');
-    // expect(mockSdk.logger.info).toHaveBeenCalledWith('id: conv123');
+    expect(mockSdk.logger.info).toHaveBeenCalledWith('id: conv123');
 
     // Test the event handler
     mockSdk.sessionManager = { handleConversationUpdate: jest.fn(), handleConversationUpdateRaw: jest.fn() } as any;
-    // const mockEvent = { eventBody: {} };
-    // eventHandler(mockEvent);
-    // expect(mockSdk.logger.info).toHaveBeenCalledWith('conversationUpdate');
+    const mockEvent = { eventBody: {} };
+    eventHandler(mockEvent);
+    expect(mockSdk.logger.info).toHaveBeenCalledWith('conversationUpdate');
+  });
+
+  it('should handle JWT auth path with no conversation id', async () => {
+    mockSdk._personDetails = { id: 'user123' } as any;
+    mockSdk._customerData = { conversation: { id: null } } as any;
+    Object.defineProperty(mockSdk, 'isJwtAuth', { get: () => true });
+    mockSdk._streamingConnection = {
+      on: jest.fn(),
+      webrtcSessions: { on: jest.fn() },
+      notifications: { subscribe: jest.fn() }
+    } as any;
+
+    await proxyStreamingClientEvents.call(mockSdk);
+
+    expect(mockSdk.logger.error).toHaveBeenCalledWith('No conversation id found in customer data', mockSdk._customerData);
   });
 
   it('should handle non-JWT auth path', async () => {
