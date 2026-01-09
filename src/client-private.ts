@@ -91,8 +91,21 @@ export async function setupStreamingClient (this: GenesysCloudWebrtcSdk): Promis
 export async function proxyStreamingClientEvents (this: GenesysCloudWebrtcSdk): Promise<void> {
   this.sessionManager = new SessionManager(this);
 
-  if (this._personDetails && !this.isJwtAuth) {
-    await this._streamingConnection.notifications.subscribe(`v2.users.${this._personDetails.id}.conversations`, handleConversationUpdate.bind(this), true);
+  this.logger.info("Inside proxyStreamingClientEvents")
+  if (this._personDetails) {
+    this.logger.info("Inside _personDetails")
+    if (this.isJwtAuth) {
+      this.logger.info("Inside isJwtAuth");
+      const {id} = this._customerData.conversation;
+      this.logger.info(`id: ${id}`);
+      this._streamingConnection.on(`notify:v2.conversations.guest.${id}`, (conversationEvent) => {
+        this.logger.info('conversationUpdate');
+        handleConversationUpdate.call(this, conversationEvent);
+      })
+    } else {
+      this.logger.info("Inside else")
+      await this._streamingConnection.notifications.subscribe(`v2.users.${this._personDetails.id}.conversations`, handleConversationUpdate.bind(this), true);
+    }
   }
 
   // webrtc events
