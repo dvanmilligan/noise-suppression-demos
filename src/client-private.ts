@@ -96,6 +96,7 @@ export async function proxyStreamingClientEvents (this: GenesysCloudWebrtcSdk): 
     this.logger.info("Inside _personDetails")
     if (this.isJwtAuth) {
       this.logger.info("Inside isJwtAuth");
+      this.logger.info("data", this._customerData);
       const id = this._customerData.conversation.id;
       if (!id) {
         this.logger.error('No conversation id found in customer data', this._customerData);
