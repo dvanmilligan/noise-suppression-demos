@@ -223,221 +223,96 @@ describe('handleDisconnectedEvent', () => {
 
 describe('proxyStreamingClientEvents', () => {
   it('should handle JWT auth path', async () => {
-    // _personDetails and _customerData are set from parsing the JWT
+    const { handleConversationUpdateSpy, mockConversationUpdate } = await createEventDataAndCallProxyFunction();
+
+    expect(handleConversationUpdateSpy).toHaveBeenCalledWith(new ConversationUpdate(mockConversationUpdate.eventBody));
+  });
+
+  it('should handle JWT auth path with no conversation id', async () => {
+    const { handleConversationUpdateSpy, conversationUpdateHandler } = await createEventDataAndCallProxyFunction({ conversationId: undefined });
+
+    expect(conversationUpdateHandler).toBe(undefined);
+    expect(handleConversationUpdateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should handle JWT auth path with non-agent conference', async () => {
+    const { handleConversationUpdateSpy, conversationUpdateHandler } = await createEventDataAndCallProxyFunction({ jabberId: 'adhoc-123@conference.com' });
+
+    expect(conversationUpdateHandler).toBe(undefined);
+    expect(handleConversationUpdateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should handle JWT auth path with missing conference jid', async () => {
+    const { handleConversationUpdateSpy, conversationUpdateHandler } = await createEventDataAndCallProxyFunction({ jabberId: undefined });
+
+    expect(conversationUpdateHandler).toBe(undefined);
+    expect(handleConversationUpdateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should handle JWT auth path with guest with userId', async () => {
+    const { handleConversationUpdateSpy, conversationUpdateHandler } = await createEventDataAndCallProxyFunction({ userId: 'user123'});
+
+    expect(conversationUpdateHandler).toBe(undefined);
+    expect(handleConversationUpdateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should still handle non-JWT auth path', async () => {
+    const { handleConversationUpdateSpy, mockConversationUpdate } = await createEventDataAndCallProxyFunction({
+      userId: 'user123',
+      isJwtAuth: false
+    });
+
+    expect(handleConversationUpdateSpy).toHaveBeenCalledWith(new ConversationUpdate(mockConversationUpdate.eventBody));
+    expect(mockSdk._customerData).toBe(undefined);
+  });
+
+  async function createEventDataAndCallProxyFunction(options = {} as any) {
+    const userId = 'userId' in options ? options.userId : undefined;
+    const jabberId = 'jabberId' in options ? options.jabberId : 'agent-123@conference.com';
+    const conversationId = 'conversationId' in options ? options.conversationId : 'conv123';
+    const isJwtAuth = options.isJwtAuth ?? true;
+
     mockSdk._personDetails = {
-      id: undefined,
-      chat: { jabberId: 'agent-123@conference.com' }
+      id: userId,
+      chat: { jabberId: jabberId }
     } as IPersonDetails;
 
-    mockSdk._customerData = {
-      conversation: { id: 'conv123' }
-    } as ICustomerData;
+    if (isJwtAuth) { // we only assign this on jwt path
+      mockSdk._customerData = {
+        conversation: { id: conversationId }
+      } as ICustomerData;
+    }
 
-    Object.defineProperty(mockSdk, 'isJwtAuth', { get: () => true });
+    Object.defineProperty(mockSdk, 'isJwtAuth', { get: () => isJwtAuth });
 
     let conversationUpdateHandler;
 
     mockSdk._streamingConnection = {
       on: jest.fn((event, handler) => {
-        if (event === 'notify:v2.guest.conversations.conv123') {
+        if (event === `notify:v2.guest.conversations.${conversationId}`) {
+          if (conversationUpdateHandler) throw new Error('handler already assigned');
           conversationUpdateHandler = handler;
         }
       }),
-      webrtcSessions: { on: jest.fn() },
-      notifications: { subscribe: jest.fn() }
-    } as unknown as StreamingClient;
-
-    await proxyStreamingClientEvents.call(mockSdk);
-
-    mockSdk.sessionManager = { handleConversationUpdate: jest.fn(), handleConversationUpdateRaw: jest.fn() } as never;
-    const mockConversationUpdate = { eventBody: {}, metadata: {correlationId: ''}, topicName: '' };
-    conversationUpdateHandler(mockConversationUpdate);
-
-    const spy = mockSdk.sessionManager.handleConversationUpdate;
-    expect(spy).toHaveBeenCalledWith(new ConversationUpdate(mockConversationUpdate.eventBody));
-  });
-
-  it('should handle JWT auth path with no conversation id 2', async () => {
-    mockSdk._personDetails = {
-      id: undefined,
-      chat: { jabberId: 'agent-123@conference.com' }
-    } as IPersonDetails;
-
-    mockSdk._customerData = {
-      conversation: { id: undefined }
-    } as ICustomerData;
-
-    Object.defineProperty(mockSdk, 'isJwtAuth', { get: () => true });
-
-    let conversationUpdateHandler: any;
-
-    mockSdk._streamingConnection = {
-      on: jest.fn((event, handler) => {
-        if (event === 'notify:v2.guest.conversations.conv123') {
-          conversationUpdateHandler = handler;
-        }
-      }),
-      webrtcSessions: { on: jest.fn() },
-      notifications: { subscribe: jest.fn() }
-    } as unknown as StreamingClient;
-
-    await proxyStreamingClientEvents.call(mockSdk);
-
-    // The handler is undefined because we didn't create it since conversation: {id: } was undefined
-    expect(conversationUpdateHandler).toBe(undefined);
-
-    mockSdk.sessionManager = { handleConversationUpdate: jest.fn(), handleConversationUpdateRaw: jest.fn() } as never;
-    const mockConversationUpdate = { eventBody: {}, metadata: {correlationId: ''}, topicName: '' };
-    if (conversationUpdateHandler) conversationUpdateHandler(mockConversationUpdate);
-
-    const spy = mockSdk.sessionManager.handleConversationUpdate;
-    expect(spy).not.toHaveBeenCalled();
-  });
-
-  it('should handle JWT auth path with non-agent conferences', async () => {
-    mockSdk._personDetails = {
-      id: undefined,
-      chat: { jabberId: 'adhoc-123@conference.com' }
-    } as IPersonDetails;
-
-    mockSdk._customerData = {
-      conversation: { id: 'conv123' }
-    } as ICustomerData;
-
-    Object.defineProperty(mockSdk, 'isJwtAuth', { get: () => true });
-
-    let conversationUpdateHandler: any;
-
-    mockSdk._streamingConnection = {
-      on: jest.fn((event, handler) => {
-        if (event === 'notify:v2.guest.conversations.conv123') {
-          conversationUpdateHandler = handler;
-        }
-      }),
-      webrtcSessions: { on: jest.fn() },
-      notifications: { subscribe: jest.fn() }
-    } as unknown as StreamingClient;
-
-    await proxyStreamingClientEvents.call(mockSdk);
-
-    // The handler is undefined because we didn't create it since conversation: {id: } was undefined
-    expect(conversationUpdateHandler).toBe(undefined);
-
-    mockSdk.sessionManager = { handleConversationUpdate: jest.fn(), handleConversationUpdateRaw: jest.fn() } as never;
-    const mockConversationUpdate = { eventBody: {}, metadata: {correlationId: ''}, topicName: '' };
-    if (conversationUpdateHandler) conversationUpdateHandler(mockConversationUpdate);
-
-    const spy = mockSdk.sessionManager.handleConversationUpdate;
-    expect(spy).not.toHaveBeenCalled();
-  });
-
-  it('should handle JWT auth path with missing conference jid', async () => {
-    mockSdk._personDetails = {
-      id: undefined,
-      chat: { jabberId: undefined }
-    } as IPersonDetails;
-
-    mockSdk._customerData = {
-      conversation: { id: 'conv123' }
-    } as ICustomerData;
-
-    Object.defineProperty(mockSdk, 'isJwtAuth', { get: () => true });
-
-    let conversationUpdateHandler: any;
-
-    mockSdk._streamingConnection = {
-      on: jest.fn((event, handler) => {
-        if (event === 'notify:v2.guest.conversations.conv123') {
-          conversationUpdateHandler = handler;
-        }
-      }),
-      webrtcSessions: { on: jest.fn() },
-      notifications: { subscribe: jest.fn() }
-    } as unknown as StreamingClient;
-
-    await proxyStreamingClientEvents.call(mockSdk);
-
-    // The handler is undefined because we didn't create it since conversation: {id: } was undefined
-    expect(conversationUpdateHandler).toBe(undefined);
-
-    mockSdk.sessionManager = { handleConversationUpdate: jest.fn(), handleConversationUpdateRaw: jest.fn() } as never;
-    const mockConversationUpdate = { eventBody: {}, metadata: {correlationId: ''}, topicName: '' };
-    if (conversationUpdateHandler) conversationUpdateHandler(mockConversationUpdate);
-
-    const spy = mockSdk.sessionManager.handleConversationUpdate;
-    expect(spy).not.toHaveBeenCalled();
-  });
-
-  it('should handle JWT auth path with guest with userId', async () => {
-    mockSdk._personDetails = {
-      id: 'user123',
-      chat: { jabberId: 'agent-123@conference.com' }
-    } as IPersonDetails;
-
-    mockSdk._customerData = {
-      conversation: { id: 'conv123' }
-    } as ICustomerData;
-
-    Object.defineProperty(mockSdk, 'isJwtAuth', { get: () => true });
-
-    let conversationUpdateHandler: any;
-
-    mockSdk._streamingConnection = {
-      on: jest.fn((event, handler) => {
-        if (event === 'notify:v2.guest.conversations.conv123') {
-          conversationUpdateHandler = handler;
-        }
-      }),
-      webrtcSessions: { on: jest.fn() },
-      notifications: { subscribe: jest.fn() }
-    } as unknown as StreamingClient;
-
-    await proxyStreamingClientEvents.call(mockSdk);
-
-    // The handler is undefined because we didn't create it since conversation: {id: } was undefined
-    expect(conversationUpdateHandler).toBe(undefined);
-
-    mockSdk.sessionManager = { handleConversationUpdate: jest.fn(), handleConversationUpdateRaw: jest.fn() } as never;
-    const mockConversationUpdate = { eventBody: {}, metadata: {correlationId: ''}, topicName: '' };
-    if (conversationUpdateHandler) conversationUpdateHandler(mockConversationUpdate);
-
-    const spy = mockSdk.sessionManager.handleConversationUpdate;
-    expect(spy).not.toHaveBeenCalled();
-  });
-
-  it('should handle non-JWT auth path', async () => {
-    mockSdk._personDetails = {
-      id: 'user123',
-      chat: { jabberId: 'adhoc-123@conference.com' }
-    } as IPersonDetails;
-
-    mockSdk._customerData = undefined; // the normal route doesn't set `_customerData`
-
-    Object.defineProperty(mockSdk, 'isJwtAuth', { get: () => false });
-
-    let conversationUpdateHandler: any;
-
-    mockSdk._streamingConnection = {
-      on: jest.fn(),
       webrtcSessions: { on: jest.fn() },
       notifications: {
         subscribe: jest.fn((topic, handler) => {
-          if (topic === 'v2.users.user123.conversations') {
+          if (topic === `v2.users.${userId}.conversations`) {
+            if (conversationUpdateHandler) throw new Error('handler already assigned');
             conversationUpdateHandler = handler;
           }
         })
       }
-    } as any;
+    } as unknown as StreamingClient;
 
     await proxyStreamingClientEvents.call(mockSdk);
 
     mockSdk.sessionManager = { handleConversationUpdate: jest.fn(), handleConversationUpdateRaw: jest.fn() } as never;
-    const mockConversationUpdate = { eventBody: {}, metadata: {correlationId: ''}, topicName: '' };
+    const mockConversationUpdate = { eventBody: {}, metadata: { correlationId: '' }, topicName: '' };
     if (conversationUpdateHandler) conversationUpdateHandler(mockConversationUpdate);
 
-    // `handleConversationUpdate` is triggered by the usual non-jwt path
-    const spy = mockSdk.sessionManager.handleConversationUpdate;
-    expect(spy).toHaveBeenCalledWith(new ConversationUpdate(mockConversationUpdate.eventBody));
-    expect(mockSdk._customerData).toBe(undefined);
-  });
+    const handleConversationUpdateSpy = mockSdk.sessionManager.handleConversationUpdate;
+
+    return { handleConversationUpdateSpy, conversationUpdateHandler, mockConversationUpdate};
+  }
 });
