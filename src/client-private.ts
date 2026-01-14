@@ -91,24 +91,17 @@ export async function setupStreamingClient (this: GenesysCloudWebrtcSdk): Promis
 export async function proxyStreamingClientEvents (this: GenesysCloudWebrtcSdk): Promise<void> {
   this.sessionManager = new SessionManager(this);
 
-  this.logger.info("Inside proxyStreamingClientEvents")
   if (this._personDetails) {
-    this.logger.info("Inside _personDetails")
     if (this.isJwtAuth) {
-      this.logger.info("Inside isJwtAuth");
-      this.logger.info("data", this._customerData);
-      const id = this._customerData.conversation.id;
-      if (!id) {
-        this.logger.error('No conversation id found in customer data', this._customerData);
-        return;
+      const id = this._customerData.conversation?.id;
+      const userId = this._personDetails.id;
+      const roomJid = this._personDetails.chat?.jabberId;
+      if (id && !userId && roomJid?.startsWith('agent-')) {
+        this._streamingConnection.on(`notify:v2.guest.conversations.${id}`, (conversationEvent) => {
+          handleConversationUpdate.call(this, conversationEvent);
+        });
       }
-      this.logger.info(`id: ${id}`);
-      this._streamingConnection.on(`notify:v2.conversations.guest.${id}`, (conversationEvent) => {
-        this.logger.info('conversationUpdate');
-        handleConversationUpdate.call(this, conversationEvent);
-      });
     } else {
-      this.logger.info("Inside else")
       await this._streamingConnection.notifications.subscribe(`v2.users.${this._personDetails.id}.conversations`, handleConversationUpdate.bind(this), true);
     }
   }
