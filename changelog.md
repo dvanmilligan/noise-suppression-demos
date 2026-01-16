@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 # [Unreleased](https://github.com/MyPureCloud/genesys-cloud-webrtc-sdk/compare/v11.5.0...HEAD)
+### Added
+* [STREAM-1099](https://inindca.atlassian.net/browse/STREAM-1099) - Emit `participantsUpdate` for JWT Video Guests
 
 # [v11.5.0](https://github.com/MyPureCloud/genesys-cloud-webrtc-sdk/compare/v11.4.0...v11.5.0)
 ### Fixed
