@@ -56,7 +56,7 @@ describe('handlePropose', () => {
     expect(superSpy).not.toHaveBeenCalled();
   });
 
-  it('should auto-accept as observer when current user is the fromUserId', async () => {
+  it('should auto-accept as target when current user is the fromUserId', async () => {
     const proceedSpy = jest.spyOn(handler, 'proceedWithSession').mockResolvedValue(null);
     const superSpy = jest.spyOn(BaseSessionHandler.prototype, 'handlePropose').mockResolvedValue(null);
 
@@ -65,7 +65,7 @@ describe('handlePropose', () => {
     
     await handler.handlePropose(pendingSession);
 
-    expect(handler._liveMonitoringObserver).toBe(true);
+    expect(handler._liveMonitoringObserver).toBe(false);
     expect(proceedSpy).toHaveBeenCalledWith(pendingSession);
     expect(superSpy).not.toHaveBeenCalled();
   });

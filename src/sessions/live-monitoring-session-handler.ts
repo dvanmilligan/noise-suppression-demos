@@ -31,7 +31,7 @@ export class LiveMonitoringSessionHandler extends BaseSessionHandler {
 
     // Auto-accept if current user is the observer (fromUserId matches current user)
     if (pendingSession.fromUserId === this.sdk._personDetails?.id) {
-      this._liveMonitoringObserver = true;
+      this._liveMonitoringObserver = false;
       return this.proceedWithSession(pendingSession);
     }
 
