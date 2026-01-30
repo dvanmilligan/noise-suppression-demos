@@ -29,13 +29,19 @@ export class LiveMonitoringSessionHandler extends BaseSessionHandler {
       return this.proceedWithSession(pendingSession);
     }
 
+    // Auto-accept if current user is the target (fromUserId matches current user)
+    if (pendingSession.fromUserId === this.sdk._personDetails?.id) {
+      this._liveMonitoringObserver = false;
+      return this.proceedWithSession(pendingSession);
+    }
+
     // if not auto accepting sessions, emit this event for the consumer to accept
     await super.handlePropose(pendingSession);
   }
 
   async acceptSession(session: LiveScreenMonitoringSession, params: IAcceptSessionRequest): Promise<void> {
-    // Store the liveMonitoringObserver flag
-    this._liveMonitoringObserver = params.liveMonitoringObserver || false;
+    // Store the liveMonitoringObserver flag (use existing flag if already set in handlePropose)
+    this._liveMonitoringObserver = this._liveMonitoringObserver || params.liveMonitoringObserver || false;
 
     if (this._liveMonitoringObserver) {
       await this.acceptSessionForObserver(session, params)

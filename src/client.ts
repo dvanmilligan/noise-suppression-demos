@@ -145,10 +145,10 @@ export class GenesysCloudWebrtcSdk extends (EventEmitter as { new(): StrictEvent
 
     let allowedSessionTypes = options.allowedSessionTypes || [SessionTypes.softphone, SessionTypes.collaborateVideo, SessionTypes.acdScreenShare, SessionTypes.liveScreenMonitoring];
 
-    // If using JWT auth, we only support screen recording and video conferencing.
+    // If using JWT auth, we only support screen recording, video conferencing and live screen monitoring.
     if (options.jwt) {
-      console.debug(`Forcing allowed session types to be ${SessionTypes.screenRecording} and ${SessionTypes.collaborateVideo} due to jwt auth`);
-      allowedSessionTypes = [ SessionTypes.screenRecording, SessionTypes.collaborateVideo ];
+      console.debug(`Forcing allowed session types to be ${SessionTypes.screenRecording}, ${SessionTypes.collaborateVideo} and ${SessionTypes.liveScreenMonitoring} due to jwt auth`);
+      allowedSessionTypes = [ SessionTypes.screenRecording, SessionTypes.collaborateVideo, SessionTypes.liveScreenMonitoring ];
     }
 
     this._config = {
