@@ -5,7 +5,9 @@ import LiveMonitoringSessionHandler from '../../../src/sessions/live-monitoring-
 import * as utils from '../../../src/utils';
 import BaseSessionHandler from "../../../src/sessions/base-session-handler";
 import * as mediaUtils from "../../../src/media/media-utils";
-import {IExtendedMediaSession, LiveScreenMonitoringSession, VideoMediaSession} from "../../../src";
+import {
+  LiveScreenMonitoringSession,
+} from "../../../src";
 
 let handler: LiveMonitoringSessionHandler;
 let mockSdk: GenesysCloudWebrtcSdk;
@@ -54,15 +56,32 @@ describe('handlePropose', () => {
     expect(superSpy).not.toHaveBeenCalled();
   });
 
-  it('should not accept session if not autoAcceptPendingLiveScreenMonitoringRequests', async () => {
+  it('should auto-accept as target when current user is the fromUserId', async () => {
     const proceedSpy = jest.spyOn(handler, 'proceedWithSession').mockResolvedValue(null);
     const superSpy = jest.spyOn(BaseSessionHandler.prototype, 'handlePropose').mockResolvedValue(null);
 
     mockSdk._config.autoAcceptPendingLiveScreenMonitoringRequests = false;
-    await handler.handlePropose({} as any);
+    const pendingSession = { fromUserId: 'user123' } as any;
+    
+    await handler.handlePropose(pendingSession);
 
+    expect(handler._liveMonitoringObserver).toBe(false);
+    expect(proceedSpy).toHaveBeenCalledWith(pendingSession);
+    expect(superSpy).not.toHaveBeenCalled();
+  });
+
+  it('should not accept session if not autoAcceptPendingLiveScreenMonitoringRequests and user is not observer', async () => {
+    const proceedSpy = jest.spyOn(handler, 'proceedWithSession').mockResolvedValue(null);
+    const superSpy = jest.spyOn(BaseSessionHandler.prototype, 'handlePropose').mockResolvedValue(null);
+
+    mockSdk._config.autoAcceptPendingLiveScreenMonitoringRequests = false;
+    const pendingSession = { fromUserId: 'different-user' } as any;
+    
+    await handler.handlePropose(pendingSession);
+
+    expect(handler._liveMonitoringObserver).toBe(false);
     expect(proceedSpy).not.toHaveBeenCalled();
-    expect(superSpy).toHaveBeenCalled();
+    expect(superSpy).toHaveBeenCalledWith(pendingSession);
   });
 });
 
@@ -103,14 +122,15 @@ describe('acceptSession', () => {
     expect(superAcceptSessionSpy).toHaveBeenCalledWith(session, params);
   });
 
-  it('should default liveMonitoringObserver to false when not provided', async () => {
+  it('should preserve liveMonitoringObserver flag set in handlePropose', async () => {
     const params = { conversationId: session.conversationId };
+    handler._liveMonitoringObserver = true; // Simulate flag set in handlePropose
 
     await handler.acceptSession(session as any, params);
 
-    expect(handler._liveMonitoringObserver).toBe(false);
-    expect(acceptSessionForTargetSpy).toHaveBeenCalledWith(session, params);
-    expect(acceptSessionForObserverSpy).not.toHaveBeenCalled();
+    expect(handler._liveMonitoringObserver).toBe(true);
+    expect(acceptSessionForObserverSpy).toHaveBeenCalledWith(session, params);
+    expect(acceptSessionForTargetSpy).not.toHaveBeenCalled();
     expect(superAcceptSessionSpy).toHaveBeenCalledWith(session, params);
   });
 });
