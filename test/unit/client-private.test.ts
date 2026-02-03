@@ -266,7 +266,7 @@ describe('proxyStreamingClientEvents', () => {
     expect(mockSdk._customerData).toBe(undefined);
   });
 
-  async function createEventDataAndCallProxyFunction(options = {} as any) {
+  async function createEventDataAndCallProxyFunction(options = {} as { userId?: string, jabberId?: string, conversationId?: string, isJwtAuth?: boolean }) {
     const userId = 'userId' in options ? options.userId : undefined;
     const jabberId = 'jabberId' in options ? options.jabberId : 'agent-123@conference.com';
     const conversationId = 'conversationId' in options ? options.conversationId : 'conv123';
