@@ -227,11 +227,10 @@ export class SessionManager {
     });
 
     const promises = sessions.map(session => {
-      return this.updateOutgoingMedia({
-        session,
-        videoDeviceId: opts.videoDeviceId,
-        audioDeviceId: opts.audioDeviceId
-      });
+      const updateOptions: any = {session};
+      if ('videoDeviceId' in opts) updateOptions.videoDeviceId = opts.videoDeviceId;
+      if ('audioDeviceId' in opts) updateOptions.audioDeviceId = opts.audioDeviceId;
+      return this.updateOutgoingMedia(updateOptions);
     });
     return Promise.all(promises);
   }
