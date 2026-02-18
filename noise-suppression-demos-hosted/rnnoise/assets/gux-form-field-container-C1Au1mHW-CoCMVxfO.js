@@ -1,1 +1,0 @@
-import{h as t}from"./index-RhTaIPoL.js";const a=({position:r,required:e},u)=>t("div",{class:{"gux-form-field-label":!0,[`gux-${r}`]:!0,"gux-required":e}},u),i=({labelPosition:r,characterLimit:e},u)=>t("div",{class:{"gux-form-field-container":!0,[`gux-${r}`]:!0,"gux-character-counter":e>0}},u);export{a as G,i as a};

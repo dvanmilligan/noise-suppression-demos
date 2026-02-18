@@ -1,1 +1,0 @@
-function r(t){const e=t.closest("fieldset");return t.disabled||(e==null?void 0:e.disabled)}function d(t,e){const i=t.closest("fieldset"),s=new MutationObserver(a=>{a.forEach(o=>{o.attributeName==="disabled"&&e(r(t))})});return s.observe(t,{attributes:!0}),i&&s.observe(i,{attributes:!0}),s}export{r as c,d as o};

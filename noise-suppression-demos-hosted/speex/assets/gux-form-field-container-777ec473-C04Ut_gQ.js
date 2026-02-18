@@ -1,1 +1,0 @@
-import{h as u}from"./index-CV4KLuUB.js";const i=({position:r,required:e},t)=>u("div",{class:{"gux-form-field-label":!0,[`gux-${r}`]:!0,"gux-required":e}},t),a=({labelPosition:r},e)=>u("div",{class:{"gux-form-field-container":!0,[`gux-${r}`]:!0}},e);export{i as G,a};

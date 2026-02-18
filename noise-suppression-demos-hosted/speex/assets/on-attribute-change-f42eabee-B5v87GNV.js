@@ -1,1 +1,0 @@
-function o(e,t){const r=new MutationObserver(a=>{a.forEach(i=>{i.attributeName==="disabled"&&t(e.disabled)})});return r.observe(e,{attributes:!0}),r}function s(e,t){const r=new MutationObserver(a=>{a.forEach(i=>{i.attributeName==="required"&&t(e.required)})});return r.observe(e,{attributes:!0}),r}export{o as a,s as o};

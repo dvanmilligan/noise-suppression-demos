@@ -12,15 +12,5 @@ export default defineConfig({
   server: {
     host: 'localhost',
     port: 8443
-  },
-  build: {
-    rollupOptions: {
-      external: [
-        'vite-plugin-node-polyfills/shims/process',
-        'vite-plugin-node-polyfills/shims/buffer',
-        'vite-plugin-node-polyfills/shims/util',
-        'vite-plugin-node-polyfills/shims/global'
-      ]
-    }
   }
 })

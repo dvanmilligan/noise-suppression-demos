@@ -1,1 +1,0 @@
-import{h as e}from"./index-CV4KLuUB.js";const a=({show:r},o)=>e("div",{class:{"gux-form-field-help":!0,"gux-show":r}},e("div",{class:"gux-message"},o)),i=({show:r},o)=>e("div",{class:{"gux-form-field-error":!0,"gux-show":r}},e("gux-icon",{"icon-name":"fa/hexagon-exclamation-solid",decorative:!0}),e("div",{class:"gux-message"},o));export{i as G,a};

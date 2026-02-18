@@ -1,1 +1,0 @@
-function l(e){return e.nodeType===Node.DOCUMENT_NODE||e.nodeType===Node.DOCUMENT_FRAGMENT_NODE?e:e.ownerDocument}function u(e,i){let r=null,t=e.getRootNode(),o;for(;t&&t!==r&&!o;){const n=l(t);o=n==null?void 0:n.getElementById(i),r=t,t=t.getRootNode()}return o}export{u as f};
