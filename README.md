@@ -25,26 +25,53 @@ Standard WebRTC SDK implementation with browser-native audio processing.
 - ✅ Device selection
 - ✅ Browser noise suppression
 
-#### 2. RNNoise Demo (`react-demo-rnnoise`)
-Real-time noise suppression using RNNoise WASM in the browser.
-- ✅ Real-time processing
-- ✅ Adjustable parameters
-- ✅ Call recording & comparison
-- ⚠️ Limited effectiveness (VAD issues)
-
-#### 3. Speex Demo (`react-demo-clearervoice`)
+#### 2. Speex Demo (`react-demo-clearervoice`)
 Open-source noise suppression using Speex DSP library.
 - ✅ Real-time processing (~0ms latency)
 - ✅ Open-source (BSD license)
 - ✅ No backend required
-- ✅ Better than RNNoise
+- ✅ Best audio quality
 
-**Quick Start:**
+#### 3. RNNoise Demo (`react-demo-rnnoise`)
+Real-time noise suppression using RNNoise WASM in the browser.
+- ✅ Real-time processing
+- ✅ Adjustable parameters
+- ✅ Call recording & comparison
+- ⚠️ Experimental (VAD issues)
+
+**Running Demos Locally:**
+
+1. Clone this repository:
 ```bash
-./switch-demo.sh  # Interactive demo switcher
+git clone https://github.com/dvanmilligan/noise-suppression-demos.git
+cd noise-suppression-demos
 ```
 
-See [DEMO-COMPARISON-SPEEX.md](./DEMO-COMPARISON-SPEEX.md) for detailed comparison and [SWITCHING-DEMOS.md](./SWITCHING-DEMOS.md) for setup instructions.
+2. Install dependencies for a demo:
+```bash
+cd react-demo-app  # or react-demo-clearervoice or react-demo-rnnoise
+npm install
+```
+
+3. Configure OAuth (required):
+```bash
+cp config.example.json config.json
+# Edit config.json and add your Genesys Cloud OAuth Client ID
+```
+
+4. Run the demo:
+```bash
+npm run dev
+```
+
+The demo will be available at `https://localhost:8443`
+
+**Automated Setup:**
+```bash
+./install.sh  # Automated installation and setup
+```
+
+See [NOISE-SUPPRESSION-DEMOS-README.md](./NOISE-SUPPRESSION-DEMOS-README.md) for detailed documentation.
 
 Not yet supported:
 - WebRTC Video (Unauthenticated User/Guest)
