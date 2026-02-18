@@ -1,0 +1,1 @@
+import{h as e}from"./index-RhTaIPoL.js";const a=({show:r},s)=>e("div",{class:{"gux-form-field-help":!0,"gux-show":r}},e("div",{class:"gux-message"},s)),l=({show:r},s)=>e("div",{role:"alert",class:{"gux-form-field-error":!0,"gux-show":r}},e("gux-icon",{"icon-name":"fa/hexagon-exclamation-solid",decorative:!0,size:"small"}),e("div",{class:"gux-message"},s));export{l as G,a};

@@ -1,0 +1,1 @@
+import{e as t}from"./floating-ui.dom-s4o__4X6-DwnQVfa1.js";function r(){return{name:"overflowDetection",async fn(e){const o=await t(e,{boundary:"clippingAncestors",elementContext:"reference"});return e.placement.includes("bottom")&&o.bottom>0?{y:e.y-o.bottom}:e.placement.includes("top")&&o.top>0?{y:e.y+o.top}:{}}}}export{r as o};

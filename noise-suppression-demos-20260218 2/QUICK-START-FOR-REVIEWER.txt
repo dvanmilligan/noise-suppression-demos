@@ -1,0 +1,198 @@
+================================================================================
+QUICK START - Genesys Cloud WebRTC Noise Suppression Demos
+================================================================================
+
+WHAT YOU RECEIVED:
+- File: noise-suppression-demos-20260218.tar.gz (2.0 MB)
+- This contains 4 noise suppression demos for Genesys Cloud WebRTC
+
+PREREQUISITES:
+- Node.js v16+ (check: node --version)
+- Genesys Cloud OAuth Client ID
+- 10 minutes of time
+
+================================================================================
+SETUP - OPTION 1: AUTOMATED (RECOMMENDED)
+================================================================================
+
+1. EXTRACT:
+   tar -xzf noise-suppression-demos-20260218.tar.gz
+   cd genesys-cloud-webrtc-sdk
+
+2. RUN INSTALLER:
+   ./install.sh
+
+   The script will:
+   - Check Node.js version
+   - Install all dependencies
+   - Prompt for OAuth Client ID
+   - Start a demo automatically
+
+3. OPEN BROWSER:
+   https://localhost:8443
+   (Accept the security warning - it's just localhost)
+
+================================================================================
+SETUP - OPTION 2: MANUAL (5 COMMANDS)
+================================================================================
+
+1. EXTRACT:
+   tar -xzf noise-suppression-demos-20260218.tar.gz
+   cd genesys-cloud-webrtc-sdk
+
+2. INSTALL:
+   npm install
+   cd react-demo-clearervoice && npm install && cd ..
+
+3. CONFIGURE:
+   Edit: react-demo-clearervoice/public/config.json
+   Add your OAuth Client ID:
+   {
+     "clientId": "YOUR-CLIENT-ID-HERE",
+     "redirectUri": "https://localhost:8443",
+     "environment": "mypurecloud.com"
+   }
+
+4. RUN:
+   cd react-demo-clearervoice
+   npm run dev
+
+5. OPEN BROWSER:
+   https://localhost:8443
+   (Accept the security warning - it's just localhost)
+
+================================================================================
+WHAT TO EXPECT
+================================================================================
+
+You'll see:
+✓ Login button (use your Genesys Cloud credentials)
+✓ Softphone interface
+✓ Demo switcher (to try other demos)
+✓ Noise suppression controls
+✓ Audio recording and comparison
+✓ Device selection
+
+================================================================================
+DEMOS INCLUDED
+================================================================================
+
+1. Baseline Demo (react-demo-app)
+   - Browser's built-in noise suppression
+   - Reference implementation
+
+2. Speex Demo (react-demo-clearervoice) ← START HERE
+   - Open-source Speex noise suppression
+   - Real-time browser processing
+   - Audio visualization
+
+3. RNNoise Demo (react-demo-rnnoise)
+   - AI-based noise suppression
+   - Has known VAD issue (documented)
+
+4. DeepFilterNet Demo (react-demo-deepfilternet)
+   - Coming soon (placeholder)
+
+================================================================================
+DOCUMENTATION
+================================================================================
+
+Read in this order:
+1. SETUP-INSTRUCTIONS.md (detailed setup guide)
+2. PACKAGE-FOR-REVIEW.md (review checklist)
+3. NOISE-SUPPRESSION-DEMOS-README.md (complete overview)
+4. DEVELOPER-GUIDE.md (technical deep-dive)
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Port 8443 in use?
+  Mac/Linux: lsof -ti :8443 | xargs kill -9
+  Windows: netstat -ano | findstr :8443
+
+OAuth error?
+  - Check clientId in config.json
+  - Verify redirect URI in Genesys Cloud: https://localhost:8443
+
+Dependencies failed?
+  - Check Node.js version: node --version (need v16+)
+  - Clear cache: npm cache clean --force
+
+================================================================================
+SWITCHING DEMOS
+================================================================================
+
+To try a different demo:
+1. Stop current demo (Ctrl+C)
+2. cd ../react-demo-app (or react-demo-rnnoise)
+3. npm run dev
+4. Refresh browser
+
+Or use the Demo Switcher in the UI (provides commands).
+
+================================================================================
+REVIEW FOCUS
+================================================================================
+
+Key files to review:
+- react-demo-clearervoice/src/utils/speexProcessor.ts
+- react-demo-rnnoise/src/utils/rnnoiseProcessor.ts
+- src/components/DemoSwitcher.tsx
+- src/components/CallRecorder.tsx
+
+What to test:
+- Noise suppression effectiveness
+- Audio recording and comparison
+- Demo switcher functionality
+- Browser compatibility
+- Code quality and architecture
+
+================================================================================
+KNOWN ISSUES
+================================================================================
+
+1. RNNoise VAD Issue (High Priority)
+   - VAD always returns 0.000
+   - See DEVELOPER-GUIDE.md for details
+
+2. Safari Support (Medium Priority)
+   - Limited AudioWorklet support
+   - May not work in Safari
+
+3. Port 8443 (Low Priority)
+   - Only one demo can run at a time
+   - Use demo switcher commands
+
+================================================================================
+QUESTIONS?
+================================================================================
+
+Check the documentation:
+- SETUP-INSTRUCTIONS.md (detailed setup)
+- PACKAGE-FOR-REVIEW.md (review guide)
+- DEVELOPER-GUIDE.md (technical details)
+
+Or contact the development team.
+
+================================================================================
+READY TO START?
+================================================================================
+
+OPTION 1 - Automated (Recommended):
+
+  tar -xzf noise-suppression-demos-20260218.tar.gz
+  cd genesys-cloud-webrtc-sdk
+  ./install.sh
+
+OPTION 2 - Manual:
+
+  tar -xzf noise-suppression-demos-20260218.tar.gz
+  cd genesys-cloud-webrtc-sdk
+  npm install && cd react-demo-clearervoice && npm install && cd ..
+  # Edit react-demo-clearervoice/public/config.json with your OAuth Client ID
+  cd react-demo-clearervoice && npm run dev
+
+Then open: https://localhost:8443
+
+================================================================================

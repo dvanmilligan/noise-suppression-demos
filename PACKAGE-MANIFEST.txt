@@ -1,0 +1,137 @@
+Genesys Cloud WebRTC SDK - Noise Suppression Demos
+Distribution Package
+
+Created: $(date)
+
+CONTENTS:
+=========
+
+Documentation (Start Here):
+---------------------------
+1. PACKAGE-FOR-REVIEW.md          - Quick start for reviewers
+2. NOISE-SUPPRESSION-DEMOS-README.md - Complete project overview
+3. DEVELOPER-GUIDE.md             - Technical deep-dive
+4. README.md                      - Original SDK documentation
+
+Demo Applications:
+------------------
+- react-demo-app/                 - Baseline Demo (Browser Native)
+- react-demo-clearervoice/        - Speex Demo (Open-source)
+- react-demo-rnnoise/             - RNNoise Demo (AI-based)
+- react-demo-deepfilternet/       - DeepFilterNet Demo (Coming Soon)
+
+Core SDK:
+---------
+- src/                            - WebRTC SDK source code
+- doc/                            - SDK API documentation
+
+Utilities:
+----------
+- install.sh                      - Automated installation script (RECOMMENDED)
+- setup-oauth.sh                  - OAuth configuration helper
+- launch-demo.sh                  - Interactive demo launcher
+- cleanup-and-package.sh          - Cleanup script
+- create-package.sh               - This script
+
+Development History:
+--------------------
+- docs/archive/                   - Development documentation
+
+QUICK START:
+============
+
+OPTION 1 - Automated (Recommended):
+
+1. Extract package:
+   tar -xzf noise-suppression-demos.tar.gz
+   cd genesys-cloud-webrtc-sdk
+
+2. Run installer:
+   ./install.sh
+
+3. Open browser:
+   https://localhost:8443
+
+OPTION 2 - Manual:
+
+1. Extract package:
+   tar -xzf noise-suppression-demos.tar.gz
+
+2. Install dependencies:
+   npm install
+   cd react-demo-app && npm install && cd ..
+   cd react-demo-clearervoice && npm install && cd ..
+   cd react-demo-rnnoise && npm install && cd ..
+
+3. Configure OAuth:
+   Edit react-demo-app/public/config.json
+
+4. Run a demo:
+   cd react-demo-clearervoice
+   npm run dev
+
+5. Open browser:
+   https://localhost:8443
+
+REVIEW CHECKLIST:
+=================
+
+Architecture:
+- [ ] Audio processing implementations
+- [ ] SDK integration patterns
+- [ ] Component structure
+- [ ] State management
+
+Code Quality:
+- [ ] TypeScript usage
+- [ ] Error handling
+- [ ] Resource cleanup
+- [ ] Code organization
+
+Performance:
+- [ ] CPU usage
+- [ ] Memory leaks
+- [ ] Audio latency
+- [ ] UI responsiveness
+
+Security:
+- [ ] OAuth implementation
+- [ ] Input validation
+- [ ] Token handling
+- [ ] CSP headers
+
+User Experience:
+- [ ] UI intuitiveness
+- [ ] Error messages
+- [ ] Demo switcher
+- [ ] Settings clarity
+
+Browser Compatibility:
+- [ ] Chrome
+- [ ] Firefox
+- [ ] Edge
+- [ ] Safari
+
+KNOWN ISSUES:
+=============
+
+1. RNNoise VAD Issue (High Priority)
+   - VAD always returns 0.000
+   - See docs/archive/FINAL-RNNOISE-CONCLUSION.md
+
+2. Safari AudioWorklet Support (Medium Priority)
+   - Limited support in Safari
+   - Fallback to browser NS recommended
+
+3. Port 8443 Requirement (Low Priority)
+   - Only one demo can run at a time
+   - Demo switcher provides commands
+
+CONTACT:
+========
+
+For questions or feedback:
+- Create issues in repository
+- Contact development team
+- Schedule review meeting
+

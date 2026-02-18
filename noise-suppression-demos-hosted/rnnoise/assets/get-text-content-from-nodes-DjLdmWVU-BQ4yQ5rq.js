@@ -1,0 +1,1 @@
+function r(n){return n.reduce((t,e)=>{if(e.nodeName==="SLOT"){const o=e.assignedNodes();return t.concat(r(o))}return t.concat(e.textContent)},[]).map(t=>t.trim()).filter(t=>!!t).join(" ")}export{r as g};

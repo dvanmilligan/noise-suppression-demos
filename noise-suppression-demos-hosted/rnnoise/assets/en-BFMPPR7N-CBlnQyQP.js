@@ -1,0 +1,1 @@
+const e="Page",a=" of {totalPages, number}",t="First page",g="Previous page",o="Next page",s="Last page",n="Page {currentPage, number} of {totalPages, number}",p="Go to page",P="Page {pageNumber}",r="Page {pageSelected} selected";var c={page:e,totalPages:a,firstPage:t,previousPage:g,nextPage:o,lastPage:s,pageInputLabel:n,goToPage:p,pageNumber:P,pageSelected:r};export{c as t};

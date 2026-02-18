@@ -1,0 +1,1 @@
+import{r as t,h as e}from"./index-CV4KLuUB.js";import"vite-plugin-node-polyfills/shims/process";import"vite-plugin-node-polyfills/shims/buffer";const c=class{constructor(r){t(this,r)}render(){return e("slot",{key:"7cf122ef2820dda8c5e854f0aab3863716ea218b"})}};export{c as gux_form_beta};

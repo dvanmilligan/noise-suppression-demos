@@ -1,33 +1,33 @@
-# Node Specific Files
-/node_modules
-/npm-debug.log
-.npmrc
+# OAuth Configuration - Keep secure!
+**/config.json
+!**/config.example.json
 
-dist
-docs
-test/test-pages/**/common/
-test/test-pages/*/*sdk-sample.*s*
-test/test-pages/*/index.html
-!test/test-pages/gcba/index.html
-!test/test-pages/auto-call-test/index.html
-!test/test-pages/common/
+# Dependencies
+node_modules/
+package-lock.json
 
-*.tgz
-.ignore
+# Build outputs
+dist/
+build/
 
-## vscode specific files
-/.vscode
+# Environment files
+.env
+.env.local
 
-## jetbrains specific files
-/.idea
-genesys-cloud-webrtc-sdk.iml
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# tap specific files
-/.nyc_output
-/coverage
-
-/.npmrc
-
-/test-results
-
+# OS
 .DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/

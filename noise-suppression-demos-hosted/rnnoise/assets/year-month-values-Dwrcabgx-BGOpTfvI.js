@@ -1,0 +1,1 @@
+function r(t,n){return`${t}-${n}`}function o(t){const[n,e]=t.split("-");return{year:n,month:e}}function a(){const t=new Date,n=t.getFullYear().toString(),e=(t.getMonth()+1).toString().padStart(2,"0");return r(n,e)}export{r as a,a as b,o as g};

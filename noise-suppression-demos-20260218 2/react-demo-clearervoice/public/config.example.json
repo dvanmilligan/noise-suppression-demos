@@ -1,0 +1,5 @@
+{
+  "clientId": "YOUR-OAUTH-CLIENT-ID-HERE",
+  "redirectUri": "https://localhost:8443",
+  "environment": "mypurecloud.com"
+}

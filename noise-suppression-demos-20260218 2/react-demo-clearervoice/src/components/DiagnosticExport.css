@@ -1,0 +1,37 @@
+.diagnostic-export-container {
+  margin: 20px 0;
+}
+
+.diagnostic-export-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.diagnostic-export-info {
+  flex: 1;
+}
+
+.diagnostic-export-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.diagnostic-export-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.diagnostic-export-note {
+  font-size: 13px;
+  color: #0066cc;
+  margin-top: 8px !important;
+}
+
+.diagnostic-export-content gux-button {
+  flex-shrink: 0;
+}

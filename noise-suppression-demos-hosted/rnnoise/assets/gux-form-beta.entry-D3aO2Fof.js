@@ -1,0 +1,1 @@
+import{r as t,h as e}from"./index-RhTaIPoL.js";import"vite-plugin-node-polyfills/shims/process";import"vite-plugin-node-polyfills/shims/buffer";const f=class{constructor(r){t(this,r)}render(){return e("slot",{key:"a558631fe11f64f60fea19028e44053512468428"})}};export{f as gux_form_beta};
