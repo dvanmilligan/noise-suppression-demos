@@ -41,6 +41,21 @@ Real-time noise suppression using RNNoise WASM in the browser.
 
 **Running Demos Locally:**
 
+**Option 1: Automated Setup (Recommended)**
+```bash
+git clone https://github.com/dvanmilligan/noise-suppression-demos.git
+cd noise-suppression-demos
+./install.sh
+```
+
+The install script will:
+- Check Node.js version (v16+ required)
+- Install dependencies for all demos
+- Prompt for your Genesys Cloud OAuth Client ID
+- Start the demo of your choice
+
+**Option 2: Manual Setup**
+
 1. Clone this repository:
 ```bash
 git clone https://github.com/dvanmilligan/noise-suppression-demos.git
@@ -66,10 +81,7 @@ npm run dev
 
 The demo will be available at `https://localhost:8443`
 
-**Automated Setup:**
-```bash
-./install.sh  # Automated installation and setup
-```
+**Note:** Only one demo can run at a time (all use port 8443). To switch demos, stop the current one (Ctrl+C) and start another.
 
 See [NOISE-SUPPRESSION-DEMOS-README.md](./NOISE-SUPPRESSION-DEMOS-README.md) for detailed documentation.
 
